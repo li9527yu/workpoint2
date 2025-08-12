@@ -1,0 +1,75 @@
+/public/home/ghfu/miniconda3/envs/kk/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+wandb: Agent Starting Run: 6xdn5mah with config:
+wandb: 	BATCH_SIZE: 8
+wandb: 	EPOCHS: 10
+wandb: 	LEARNING_RATE: 0.0001
+Run 6xdn5mah errored:
+Traceback (most recent call last):
+  File "/public/home/ghfu/miniconda3/envs/kk/lib/python3.10/site-packages/wandb/agents/pyagent.py", line 306, in _run_job
+    self._function()
+TypeError: main() missing 1 required positional argument: 'args'
+
+wandb: ERROR Run 6xdn5mah errored:
+wandb: ERROR Traceback (most recent call last):
+wandb: ERROR   File "/public/home/ghfu/miniconda3/envs/kk/lib/python3.10/site-packages/wandb/agents/pyagent.py", line 306, in _run_job
+wandb: ERROR     self._function()
+wandb: ERROR TypeError: main() missing 1 required positional argument: 'args'
+wandb: ERROR 
+wandb: Sweep Agent: Waiting for job.
+wandb: Job received.
+wandb: Agent Starting Run: krebghd1 with config:
+wandb: 	BATCH_SIZE: 8
+wandb: 	EPOCHS: 10
+wandb: 	LEARNING_RATE: 1e-05
+Run krebghd1 errored:
+Traceback (most recent call last):
+  File "/public/home/ghfu/miniconda3/envs/kk/lib/python3.10/site-packages/wandb/agents/pyagent.py", line 306, in _run_job
+    self._function()
+TypeError: main() missing 1 required positional argument: 'args'
+
+wandb: ERROR Run krebghd1 errored:
+wandb: ERROR Traceback (most recent call last):
+wandb: ERROR   File "/public/home/ghfu/miniconda3/envs/kk/lib/python3.10/site-packages/wandb/agents/pyagent.py", line 306, in _run_job
+wandb: ERROR     self._function()
+wandb: ERROR TypeError: main() missing 1 required positional argument: 'args'
+wandb: ERROR 
+wandb: Agent Starting Run: gcqbw8e0 with config:
+wandb: 	BATCH_SIZE: 8
+wandb: 	EPOCHS: 10
+wandb: 	LEARNING_RATE: 0.001
+Run gcqbw8e0 errored:
+Traceback (most recent call last):
+  File "/public/home/ghfu/miniconda3/envs/kk/lib/python3.10/site-packages/wandb/agents/pyagent.py", line 306, in _run_job
+    self._function()
+TypeError: main() missing 1 required positional argument: 'args'
+
+wandb: ERROR Run gcqbw8e0 errored:
+wandb: ERROR Traceback (most recent call last):
+wandb: ERROR   File "/public/home/ghfu/miniconda3/envs/kk/lib/python3.10/site-packages/wandb/agents/pyagent.py", line 306, in _run_job
+wandb: ERROR     self._function()
+wandb: ERROR TypeError: main() missing 1 required positional argument: 'args'
+wandb: ERROR 
+Detected 3 failed runs in the first 60 seconds, killing sweep.
+wandb: ERROR Detected 3 failed runs in the first 60 seconds, killing sweep.
+wandb: To disable this check set WANDB_AGENT_DISABLE_FLAPPING=true
+wandb: Currently logged in as: lzy1211 (lzy1211-soochow-university). Use `wandb login --relogin` to force relogin
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.2
+wandb: Run data is saved locally in /public/home/ghfu/lzy/code/instructBLIP/wandb/run-20250112_232132-uebfvq6l
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run twitter2015-a2ii-run
+wandb: ⭐️ View project at https://wandb.ai/lzy1211-soochow-university/A2II-RUN
+wandb: 🚀 View run at https://wandb.ai/lzy1211-soochow-university/A2II-RUN/runs/uebfvq6l
+You are using the default legacy behaviour of the <class 'transformers.models.t5.tokenization_t5.T5Tokenizer'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565
+Create sweep with ID: 7u958l3u
+Sweep URL: https://wandb.ai/lzy1211-soochow-university/A2II-sweep/sweeps/7u958l3u
+CreatExample:   0%|          | 0/3179 [00:00<?, ?it/s]CreatExample: 100%|██████████| 3179/3179 [00:00<00:00, 2721717.17it/s]
+CreatExample:   0%|          | 0/1122 [00:00<?, ?it/s]CreatExample: 100%|██████████| 1122/1122 [00:00<00:00, 2078625.92it/s]
+CreatExample:   0%|          | 0/1037 [00:00<?, ?it/s]CreatExample: 100%|██████████| 1037/1037 [00:00<00:00, 2349807.27it/s]
+Epoch:   0%|          | 0/10 [00:00<?, ?it/s]
+Iteration:   0%|          | 0/398 [00:00<?, ?it/s][A/public/home/ghfu/lzy/code/instructBLIP/A2II/DataProcessor.py:57: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  input_hidden_states = torch.tensor(input_hidden_states).to(input_re_ids.device)  # 确保在同一个设备上
+/public/home/ghfu/lzy/code/instructBLIP/A2II/DataProcessor.py:58: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  input_pooler_outputs = torch.tensor(input_pooler_outputs).to(input_re_ids.device)  # 确保在同一个设备上
+Passing a tuple of `past_key_values` is deprecated and will be removed in Transformers v4.48.0. You should pass an instance of `EncoderDecoderCache` instead, e.g. `past_key_values=EncoderDecoderCache.from_legacy_cache(past_key_values)`.

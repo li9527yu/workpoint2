@@ -1,0 +1,13 @@
+results/
+
+wandb/
+
+img_data/
+
+img_data2/
+
+img_feat/
+
+model/
+
+reason_data/
