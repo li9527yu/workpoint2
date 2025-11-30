@@ -1,0 +1,10 @@
+﻿split,source,positive,neutral,negative,unknown
+train,img_clue,2120,1001,441,0
+train,image_emotion,3053,49,460,0
+train,label,1508,1638,416,0
+val,img_clue,739,309,128,0
+val,image_emotion,1004,11,161,0
+val,label,515,517,144,0
+test,img_clue,886,225,120,3
+test,image_emotion,1030,9,195,0
+test,label,493,573,168,0

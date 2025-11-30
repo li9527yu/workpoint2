@@ -14,8 +14,8 @@
             },
             "pathMappings": [
                 {
-                    "localRoot": "/data/lzy1211/code/A2II/instructBLIP/A2II_CoT",
-                    "remoteRoot": "/data/lzy1211/code/A2II/instructBLIP/A2II_CoT"
+                    "localRoot": "/data/lzy1211/code/A2II/instructBLIP/Error_ana",
+                    "remoteRoot": "/data/lzy1211/code/A2II/instructBLIP/Error_ana",
                 }
             ],
             "justMyCode": true

@@ -9,10 +9,16 @@ from tqdm import tqdm, trange
 import random
 # pip install accelerate
 from transformers import T5Tokenizer, T5ForConditionalGeneration
-from CoT_Model_fuse import MyFlanT5
-# from CoT_Model import MyFlanT5
+# doublefuse
+# from CoT_Model_DoubleFuse import MyFlanT5
+# 晚期融合
+# from CoT_Model_LateFuse import MyFlanT5
+from CoT_Model import MyFlanT5
 # from T5_model_v2 import MyFlanT5
-from DataProcessor_first_rel import MyDataset
+# from DataProcessor_clues import MyDataset
+# from DataProcessor_first_rel import MyDataset
+from DataProcessor_unified import MyDataset
+
 from sklearn.metrics import precision_recall_fscore_support
 import wandb
 from torch import nn
@@ -60,32 +66,15 @@ def get_parser():
 
 
 
-def post_dataloader(batch):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    input_ids,input_multi_ids,input_attention_mask,input_multi_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label=batch
-      
-    input_ids = input_ids.clone().detach().long().to(device)
-    input_attention_mask = input_attention_mask.clone().detach().float().to(device)
-
-    input_multi_ids = input_multi_ids.clone().detach().long().to(device)
-    input_multi_attention_mask = input_multi_attention_mask.clone().detach().float().to(device)
-    
-    labels=labels.to(device).long()
-    senti_label=senti_label.to(device).long()
-    relation_label=relation_label.to(device).long()
-
-    input_pooler_outputs = input_pooler_outputs.clone().detach().to(input_ids.device)
-    input_hidden_states = input_hidden_states.clone().detach().to(input_ids.device)
-      
-    return input_ids,input_multi_ids,input_attention_mask,input_multi_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label
-
-
 # def post_dataloader(batch):
 #     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-#     input_ids,input_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label=batch
+#     input_ids,input_multi_ids,input_attention_mask,input_multi_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label=batch
       
 #     input_ids = input_ids.clone().detach().long().to(device)
 #     input_attention_mask = input_attention_mask.clone().detach().float().to(device)
+
+#     input_multi_ids = input_multi_ids.clone().detach().long().to(device)
+#     input_multi_attention_mask = input_multi_attention_mask.clone().detach().float().to(device)
     
 #     labels=labels.to(device).long()
 #     senti_label=senti_label.to(device).long()
@@ -94,40 +83,36 @@ def post_dataloader(batch):
 #     input_pooler_outputs = input_pooler_outputs.clone().detach().to(input_ids.device)
 #     input_hidden_states = input_hidden_states.clone().detach().to(input_ids.device)
       
-#     return input_ids,input_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label
+#     return input_ids,input_multi_ids,input_attention_mask,input_multi_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label
 
-def macro_f1(y_true, y_pred):
-    p_macro, r_macro, f_macro, support_macro \
-      = precision_recall_fscore_support(y_true, y_pred, average='macro')
-    # f_macro = 2*p_macro*r_macro/(p_macro+r_macro)
-    return p_macro, r_macro, f_macro
 
-# 手动裁剪每个序列，直到第一个 </s> 之前的位置
-def crop_sequences(ids, eos_token_id):
-    cropped_ids = []
-    for seq in ids:
-        eos_index = (seq == eos_token_id).nonzero(as_tuple=True)[0][0]  # 找到 </s> token 的位置
-        if eos_index.numel() > 0:  # 如果找到了 </s> token
-            cropped_ids.append(seq[:eos_index.item()])
-        else:
-            cropped_ids.append(seq)  # 如果没有找到 eos token，返回原始序列
-    return torch.stack(cropped_ids)
+def post_dataloader(batch):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    input_ids,input_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label=batch
+      
+    input_ids = input_ids.clone().detach().long().to(device)
+    input_attention_mask = input_attention_mask.clone().detach().float().to(device)
+    
+    labels=labels.to(device).long()
+    senti_label=senti_label.to(device).long()
+    relation_label=relation_label.to(device).long()
 
-def warmup_linear(x, warmup=0.002):
-    if x < warmup:
-        return x/warmup
-    return 1.0 - x
+    input_pooler_outputs = input_pooler_outputs.clone().detach().to(input_ids.device)
+    input_hidden_states = input_hidden_states.clone().detach().to(input_ids.device)
+      
+    return input_ids,input_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label
 
+ 
+# 验证集计算指标
 def evaluate(model,test_dataloader, logger):
     model.eval()
     pred_sequence,senti_labels=[],[]
     for batch in tqdm(test_dataloader, desc="Testing"):
-        input_ids,input_multi_ids,input_attention_mask,input_multi_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label= post_dataloader(batch)
+        input_ids,input_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label= post_dataloader(batch)
         with torch.no_grad():
             outputs= model.generate(input_ids=input_ids,
-                            input_multi_ids=input_multi_ids,
                             attention_mask=input_attention_mask,  
-                            input_multi_attention_mask=input_multi_attention_mask,            
+    
                             input_hidden_states    = input_hidden_states,
                             labels=labels,
                             relation=relation_label
@@ -170,16 +155,15 @@ def train(args,model,train_dataset,val_dataset,optimizer_t5,logger,):
         for step,data in enumerate(tqdm(train_dataloader,desc="Iteration")):
             batch=data
             # Sentiment
-            input_ids,input_multi_ids,input_attention_mask,input_multi_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label= post_dataloader(batch)
-            output_loss= model(input_ids=input_ids,
-                            input_multi_ids=input_multi_ids,
+            input_ids,input_attention_mask,input_hidden_states,input_pooler_outputs,labels,senti_label,relation_label= post_dataloader(batch)
+            outputs= model(input_ids=input_ids,
                             attention_mask=input_attention_mask,  
-                            input_multi_attention_mask=input_multi_attention_mask,            
+        
                             input_hidden_states    = input_hidden_states,
                             labels=labels,
                             relation=relation_label
                         )
-            # output_loss=outputs['loss']
+            output_loss=outputs['loss']
             output_loss.backward()
             lr_this_step = args.LEARNING_RATE * warmup_linear(global_step/num_train_steps, args.warmup_proportion)
             for param_group in optimizer_t5.param_groups:
@@ -242,7 +226,7 @@ def main(args):
 
     tokenizer = T5Tokenizer.from_pretrained(model_path)
     eos_token_id = tokenizer.eos_token_id  
-    t5_model=T5ForConditionalGeneration.from_pretrained(model_path)
+    # t5_model=T5ForConditionalGeneration.from_pretrained(model_path)
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -263,7 +247,7 @@ def main(args):
     test_dataset=MyDataset(args,test_data,test_img_data,tokenizer)
 
     # model
-    model = MyFlanT5(model_path=t5_model,tokenizer=tokenizer)
+    model = MyFlanT5(model_path=model_path,tokenizer=tokenizer)
     model.to(device)
 
     # Prepare optimizer

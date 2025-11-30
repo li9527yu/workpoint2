@@ -109,12 +109,49 @@ def save_json_data(file_name, data):
     with open(file_name, 'w') as f:
         json.dump(data, f)
 def construct_input(res_item):
-    text=res_item['text']
-    aspect=res_item['aspect']
-    Question=f'Given the sentence: "{text}". What is the opinion towards "{aspect}" in this sentence? Base your answer solely on the information in the sentence. Respond in one or two sentences.'
+    relation_map={"the semantic relevance is relevant, the emotional relevance is irrelevant":"relevant",
+                  "the semantic relevance is relevant, the emotional relevance is relevant":"relevant",
+                  "the semantic relevance is irrelevant, the emotional relevance is irrelevant":"irrelevant"}
+    text = res_item['text']
+    aspect = res_item['aspect']
+    relevance = relation_map[res_item['relation']]
+    prompt = f"""
+You are a multimodal aspect-based sentiment analysis assistant.  
+Use the text only to confirm which entity (aspect) is being referred to, but rely solely on the image to analyze emotional cues and determine the sentiment polarity.  
+Use the provided relevance label to guide whether sentiment should be judged.  
 
-    return Question
+Strictly output the following XML, wrapped with <<<BEGIN>>> and <<<END>>>.  
+Only output the XML block between <<<BEGIN>>> and <<<END>>>. Do not output anything else.  
 
+<<<BEGIN>>>
+<result>
+  <aspect></aspect>
+  <image_has_aspect>true|false</image_has_aspect>
+  <polarity>positive|neutral|negative</polarity>
+  <evidence></evidence>
+  <confidence>0.00~1.00</confidence>
+  <visual_clues>
+    <clue></clue>
+    <clue></clue>
+  </visual_clues>
+</result>
+<<<END>>>
+
+Rules:
+1) <aspect> must exactly match the input aspect.  
+2) If the entity is not found in the image or no clear attitude is visible → set <polarity>neutral</polarity> and <confidence> between 0.00–0.30.  
+3) <evidence> must be a single sentence , and must not include textual sentiment from the input.  
+4) <visual_clues> can contain at most 3 items, each <clue> must be a short phrase only.  
+5) <confidence> must be a decimal between 0.00 and 1.00 with exactly two decimal places (e.g., 0.25, 0.80).   
+6) If RelevanceLabel is "irrelevant", output <image_has_aspect>false</image_has_aspect>, <polarity>neutral</polarity>, <confidence>0.00–0.30</confidence>.  
+7) If RelevanceLabel is "relevant", analyze the image for sentiment clues related to the aspect.  
+
+Input:
+Text: "{text}"  
+Aspect: "{aspect}" 
+RelevanceLabel: "{relevance}" 
+"""
+    return prompt.strip()
 
 def parse_arguments():
     

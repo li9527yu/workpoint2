@@ -1,0 +1,10 @@
+﻿split,source,positive,neutral,negative,unknown
+train,text_clue,2165,707,307,0
+train,textual_clues_parsed,891,1956,332,0
+train,label,928,1883,368,0
+val,text_clue,749,239,134,0
+val,textual_clues_parsed,311,682,129,0
+val,label,303,670,149,0
+test,text_clue,730,205,102,0
+test,textual_clues_parsed,296,626,115,0
+test,label,317,607,113,0

@@ -70,24 +70,19 @@ class MyDataset(Data.Dataset):
         aspect = value["aspect"]
         output_labels = value["label"]
         relation = value["relation"]
-        aspect_Context= value["aspect_Context"]
-        image_caption = value["image_caption"]
-        image_emotion= value["image_emotion"]
         imagetext_meaning=value['imagetext_meaning']
         # sentiment_meaning=value["sentiment_meaning"]
 
-
-        text_description= value["text_description"]
         sentiment_map = {'0': 'neutral', '1': 'positive', '2': 'negative'}
         sentiment = sentiment_map[str(output_labels)]
 
-        instruction_related = "QA: Combining information from image and the following sentences to identify the sentiment of aspect."
-        instruction_irrelevant = "QA: Based solely on the following sentences to identify the sentiment of aspect."
+        # instruction_related = "QA: Combining information from image and the following sentences to identify the sentiment of aspect."
+        # instruction_irrelevant = "QA: Based solely on the following sentences to identify the sentiment of aspect."
 
-        # instruction_related = "Definition: Combining information from image and the following sentence to identify the sentiment of aspect in the sentence."
-        # instruction_irrelevant = "Definition: Based solely on the information in the following sentence to identify the sentiment of aspect in the sentence."
+        instruction_related = "Definition: Combining information from image and the following sentence to identify the sentiment of aspect in the sentence."
+        instruction_irrelevant = "Definition: Based solely on the information in the following sentence to identify the sentiment of aspect in the sentence."
         relation_s=1
-        inputs = f'{instruction_related} Sentence: {text}  Aspect: {aspect}  Description: {imagetext_meaning} OPTIONS: -positive -neutral -negative OUTPUT:' 
+        inputs = f'{instruction_related} Sentence: {text} Aspect: {aspect} Description: {imagetext_meaning} OPTIONS: -positive -neutral -negative OUTPUT:' 
         model_inputs = self.tokenizer(inputs, padding='max_length', truncation=True, max_length=max_input_len, return_tensors="pt")
         # 获取 tokenized 的 input_ids 和 attention_mask
         input_ids = model_inputs["input_ids"].squeeze(0)

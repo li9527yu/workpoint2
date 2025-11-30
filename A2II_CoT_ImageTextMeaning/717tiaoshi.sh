@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=1
+export CUDA_VISIBLE_DEVICES=7
 #  -m debugpy --connect 127.0.0.1:2233 "twitter2015" 
 
 # 原始的图文理解内容imagetext_meaning +  新的Instruction
@@ -12,7 +12,7 @@ do
     --dataset ${dataset}\
     --data_dir /data/lzy1211/code/A2II/instructBLIP/CoT_data_process/emotion_clue/ \
     --img_feat_dir /data/lzy1211/code/A2II/instructBLIP/img_data \
-    --output_dir /data/lzy1211/code/A2II/instructBLIP/results/A2II-CoT-ThreeInfo/imagetext_meaning_new_Instruction/${dataset}/${seed} \
+    --output_dir /data/lzy1211/code/A2II/instructBLIP/results/A2II-CoT-ThreeInfo/single_imagetext_meaning_8_17/${dataset}/${seed} \
     --BATCH_SIZE 16\
     --seed ${seed} \
     --EPOCHS 20 \
